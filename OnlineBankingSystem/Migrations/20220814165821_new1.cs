@@ -2,7 +2,7 @@
 
 namespace OnlineBankingSystem.Migrations
 {
-    public partial class AddUserToOnlineBankingTest1 : Migration
+    public partial class new1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

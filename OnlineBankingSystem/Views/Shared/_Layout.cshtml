@@ -21,13 +21,51 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">User</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
+                            </li>
+
+
+                        }
+
+
+
+
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @*@if (User.Identities.FirstOrDefault(x => x.Type == "Role").Value == "admin")*@
+                            @*@if(User.Identity.Claims[3].FirstOrDefault(x=>x.Type == "Roles").Value == "admin")*@
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="MyDetails">My Details</a>
+                            </li>
+
+                            @foreach (var c in User.Claims)
+                            {
+                                if (c.Type == "Roles" && c.Value == "Admin")
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Create">Create New User</a>
+                                    </li>
+
+                                }
+                            }
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">User</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">My Account</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Logout">Logout</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
