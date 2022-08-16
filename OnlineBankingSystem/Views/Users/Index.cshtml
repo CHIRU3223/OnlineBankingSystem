@@ -1,18 +1,39 @@
 ﻿@model IEnumerable<OnlineBankingSystem.Models.User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Index" as string;
+    ViewData["Role"] = "" as string;
 }
 
 <h1>Index</h1>
+<h2>@User.Identity.Name</h2>
+<p>@User.Identity.AuthenticationType</p>
+<ul>
+    @foreach (var c in User.Claims)
+    {
+        @if(c.Type == "Roles" && c.Value == "Admin")
+        {
+            
+            ViewData["Role"] = "Admin";
 
+        }
+                else
+                {
+                    ViewData["Role"] = "User";
+                }
+        <li>@c.Type : @c.Value</li>
+    }
+</ul>
 <p>
-    <a asp-action="Create">Create New</a>
+    @if (ViewData["Role"] as string == "Admin")
+    {
+        <a asp-action="Create">Create New</a>
+    }
 </p>
 <table class="table">
     <thead>
         <tr>
-            
+
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -41,39 +62,40 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SSN)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DoB)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserCreated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.isAdmin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NoOfAccounts)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Username">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Username">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Username">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SSN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DoB)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserCreated)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.isAdmin)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NoOfAccounts)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Username">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Username">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Username">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

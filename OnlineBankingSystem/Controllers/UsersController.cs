@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +24,58 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // GET: Users
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             //var users = _context.Users.ToListAsync(
             return View(await _context.Users.ToListAsync());
         }
 
+        public async Task<IActionResult> MyDetails()
+        {
+            var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+
+            return View(user);
+
+        }
+
+        [HttpGet("login")]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(string username, string password, string returnUrl)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(m => m.Username == username);
+            ViewData["ReturnUrl"] = returnUrl;
+            if(user.Username == username && user.Password == password)
+            {
+                var userRole = (!user.isAdmin) ? "User" : "Admin";
+                var claims = new List<Claim>();
+                claims.Add(new Claim("Username", username));
+                //claims.Add(new Claim("UserType", userRole));
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, username));
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+                claims.Add(new Claim("Roles", userRole));
+                var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimPrincipal = new ClaimsPrincipal(claimIdentity);
+                await HttpContext.SignInAsync(claimPrincipal);
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction( actionName: "Index", controllerName: "Home");
+        }
         // GET: Users/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -45,6 +94,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // GET: Users/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +104,7 @@ namespace OnlineBankingSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Username,Password,Name,PhoneNo,SSN,DoB,UserCreated,isAdmin,email,NoOfAccounts")] User user)
         {
@@ -67,6 +118,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // GET: Users/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -87,6 +139,7 @@ namespace OnlineBankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(string id, [Bind("Username,Password,Name,PhoneNo,SSN,DoB,UserCreated,isAdmin,email,NoOfAccounts")] User user)
         {
             if (id != user.Username)
@@ -118,6 +171,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // GET: Users/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -136,6 +190,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // POST: Users/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)

@@ -10,8 +10,8 @@ using OnlineBankingSystem.Data;
 namespace OnlineBankingSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220802080920_AddUserToOnlineBanking")]
-    partial class AddUserToOnlineBanking
+    [Migration("20220814165654_new")]
+    partial class @new
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,33 @@ namespace OnlineBankingSystem.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("OnlineBankingSystem.Models.Account", b =>
+                {
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<long>("Balance")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("Checkbook")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Freezed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NumberOfTransactions")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AccountNumber");
+
+                    b.HasIndex("Username");
+
+                    b.ToTable("Accounts");
+                });
 
             modelBuilder.Entity("OnlineBankingSystem.Models.User", b =>
                 {
@@ -59,6 +86,15 @@ namespace OnlineBankingSystem.Migrations
                     b.HasKey("Username");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("OnlineBankingSystem.Models.Account", b =>
+                {
+                    b.HasOne("OnlineBankingSystem.Models.User", "AccUsername")
+                        .WithMany()
+                        .HasForeignKey("Username");
+
+                    b.Navigation("AccUsername");
                 });
 #pragma warning restore 612, 618
         }
