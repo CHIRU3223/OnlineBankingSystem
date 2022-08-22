@@ -27,6 +27,15 @@ namespace OnlineBankingSystem.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        public async Task<IActionResult> MyAccountBalance()
+        {
+            var username = User.Claims.FirstOrDefault(x => x.Type == "Username").Value;
+            var user = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+            //var balance = await _context.Accounts.FirstOrDefaultAsync(x => x.AccUsername == username);
+            Console.WriteLine(user);
+            return View(user);
+        }
+
         // GET: Accounts/Details/5
         public async Task<IActionResult> Details(string id)
         {

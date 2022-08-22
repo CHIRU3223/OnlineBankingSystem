@@ -23,6 +23,8 @@ namespace OnlineBankingSystem.Controllers
             _context = context;
         }
 
+        
+
         // GET: Users
         [Authorize]
         public async Task<IActionResult> Index()
@@ -31,13 +33,19 @@ namespace OnlineBankingSystem.Controllers
             return View(await _context.Users.ToListAsync());
         }
 
+        public async Task<IActionResult> Dashboard()
+        {
+            var user = _context.Users.FirstOrDefaultAsync();
+            return View();
+
+        }
         public async Task<IActionResult> MyDetails()
         {
             var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
-
+            var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+            ViewData["Account"] = account;
             return View(user);
-
         }
 
         [HttpGet("login")]

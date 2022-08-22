@@ -46,6 +46,43 @@ namespace OnlineBankingSystem.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("OnlineBankingSystem.Models.Transaction", b =>
+                {
+                    b.Property<long>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FromAccountNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ToAccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("TransactionAmount")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TransactionMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransactionStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TransactionTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("TransactionId");
+
+                    b.HasIndex("AccountNumber");
+
+                    b.ToTable("Transaction");
+                });
+
             modelBuilder.Entity("OnlineBankingSystem.Models.User", b =>
                 {
                     b.Property<string>("Username")
@@ -93,6 +130,15 @@ namespace OnlineBankingSystem.Migrations
                         .HasForeignKey("Username");
 
                     b.Navigation("AccUsername");
+                });
+
+            modelBuilder.Entity("OnlineBankingSystem.Models.Transaction", b =>
+                {
+                    b.HasOne("OnlineBankingSystem.Models.Account", "ToAccount")
+                        .WithMany()
+                        .HasForeignKey("AccountNumber");
+
+                    b.Navigation("ToAccount");
                 });
 #pragma warning restore 612, 618
         }
