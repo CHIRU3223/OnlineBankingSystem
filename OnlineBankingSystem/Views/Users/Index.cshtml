@@ -5,8 +5,8 @@
     ViewData["Role"] = "" as string;
 }
 
-<h1>Index</h1>
-<h2>@User.Identity.Name</h2>
+<h1>Your Dashboard</h1>
+@*<h2>@User.Identity.Name</h2>
 <p>@User.Identity.AuthenticationType</p>
 <ul>
     @foreach (var c in User.Claims)
@@ -23,7 +23,7 @@
                 }
         <li>@c.Type : @c.Value</li>
     }
-</ul>
+</ul>*@
 <p>
     @if (ViewData["Role"] as string == "Admin")
     {

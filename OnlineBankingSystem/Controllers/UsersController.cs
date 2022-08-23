@@ -23,6 +23,8 @@ namespace OnlineBankingSystem.Controllers
             _context = context;
         }
 
+        
+
         // GET: Users
         [Authorize]
         public async Task<IActionResult> Index()
@@ -31,13 +33,27 @@ namespace OnlineBankingSystem.Controllers
             return View(await _context.Users.ToListAsync());
         }
 
+        public async Task<IActionResult> Dashboard()
+        {
+            var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+            ViewData["AccountBalance"] = account.Balance;
+            //var transactions = await _context.Transaction.FromSqlInterpolated($"SELECT * FROM Transaction WHERE FromAccount={account.AccountNumber}").AsNoTracking().ToListAsync();
+            //var transactions = await _context.Transaction.ToListAsync(x => x.FromAccountNumber == account.AccountNumber);
+            var transactions = await _context.Transaction.Where(m => m.FromAccountNumber == account.AccountNumber).Take(10).AsNoTracking().ToListAsync();
+            ViewData["Transactions"] = transactions;
+            
+            return View(transactions);
+
+        }
         public async Task<IActionResult> MyDetails()
         {
             var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
-
+            var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+            ViewData["AccountBalance"] = account.Balance;
             return View(user);
-
         }
 
         [HttpGet("login")]
@@ -63,7 +79,7 @@ namespace OnlineBankingSystem.Controllers
                 var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var claimPrincipal = new ClaimsPrincipal(claimIdentity);
                 await HttpContext.SignInAsync(claimPrincipal);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Dashboard));
             }
             return View();
         }
