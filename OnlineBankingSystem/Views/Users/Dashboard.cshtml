@@ -1,9 +1,61 @@
-﻿
+﻿@model IEnumerable<OnlineBankingSystem.Models.Transaction>
 @{
     ViewData["Title"] = "Dashboard";
+    var balance = ViewData["AccountBalance"];
+    var transactions = ViewData["transactions"];
 }
 
 <h1>Dashboard</h1>
+<div>
+    <h3>Account Balance = @balance</h3>
 
-hhhhhhh
 
+</div>
+
+<a asp-controller="Account" asp-action="Index" class="btn btn-secondary">Request for Checkbook</a>
+
+<a asp-controller="Account" asp-action="" class="btn btn-danger">Freeze Account</a>
+
+
+<h4>Recent 10 Transactions</h4>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.ToAccountNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionAmount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.ToAccountNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionAmount)
+                </td>
+                @*<td>
+                        <a asp-action="Edit" asp-route-id="@item.Tra">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Username">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Username">Delete</a>
+                    </td>*@
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@*<form asp-action="get" action ="">
+    Search For Transaction: <input type="date" />
+    </form>*@
+
+<a asp-controller="Transactions" asp-action="Search" class="btn btn-primary">Search Transaction</a>

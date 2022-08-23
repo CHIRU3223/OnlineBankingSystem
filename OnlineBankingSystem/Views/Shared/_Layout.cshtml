@@ -38,7 +38,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Dashboard</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Dashboard">Dashboard</a>
                             </li>
                             @*@if (User.Identities.FirstOrDefault(x => x.Type == "Role").Value == "admin")*@
                             @*@if(User.Identity.Claims[3].FirstOrDefault(x=>x.Type == "Roles").Value == "admin")*@
@@ -51,7 +51,10 @@
                                 if (c.Type == "Roles" && c.Value == "Admin")
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Create">Create New User</a>
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">All Users</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">All Accounts</a>
                                     </li>
 
                                 }
@@ -60,7 +63,7 @@
 
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">My Account</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Details">My Account Details</a>
                             </li>
 
                             <li class="nav-item">

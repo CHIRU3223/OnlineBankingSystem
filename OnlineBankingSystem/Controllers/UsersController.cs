@@ -35,8 +35,16 @@ namespace OnlineBankingSystem.Controllers
 
         public async Task<IActionResult> Dashboard()
         {
-            var user = _context.Users.FirstOrDefaultAsync();
-            return View();
+            var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+            ViewData["AccountBalance"] = account.Balance;
+            //var transactions = await _context.Transaction.FromSqlInterpolated($"SELECT * FROM Transaction WHERE FromAccount={account.AccountNumber}").AsNoTracking().ToListAsync();
+            //var transactions = await _context.Transaction.ToListAsync(x => x.FromAccountNumber == account.AccountNumber);
+            var transactions = await _context.Transaction.Where(m => m.FromAccountNumber == account.AccountNumber).Take(10).AsNoTracking().ToListAsync();
+            ViewData["Transactions"] = transactions;
+            
+            return View(transactions);
 
         }
         public async Task<IActionResult> MyDetails()
@@ -44,7 +52,7 @@ namespace OnlineBankingSystem.Controllers
             var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
             var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
-            ViewData["Account"] = account;
+            ViewData["AccountBalance"] = account.Balance;
             return View(user);
         }
 
@@ -71,7 +79,7 @@ namespace OnlineBankingSystem.Controllers
                 var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var claimPrincipal = new ClaimsPrincipal(claimIdentity);
                 await HttpContext.SignInAsync(claimPrincipal);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Dashboard));
             }
             return View();
         }

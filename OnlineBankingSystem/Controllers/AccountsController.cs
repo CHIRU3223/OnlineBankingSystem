@@ -24,7 +24,7 @@ namespace OnlineBankingSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Accounts.Include(a => a.AccUsername);
-            return View(await applicationDbContext.ToListAsync());
+            return View(applicationDbContext);
         }
 
         public async Task<IActionResult> MyAccountBalance()
@@ -35,25 +35,30 @@ namespace OnlineBankingSystem.Controllers
             Console.WriteLine(user);
             return View(user);
         }
-
-        // GET: Accounts/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var account = await _context.Accounts
-                .Include(a => a.AccUsername)
-                .FirstOrDefaultAsync(m => m.AccountNumber == id);
-            if (account == null)
-            {
-                return NotFound();
-            }
-
+            var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
+            var account = await _context.Accounts.Include(a => a.AccUsername).FirstOrDefaultAsync(x => x.Username == username);
             return View(account);
-        }
+    }
+        // GET: Accounts/Details/5
+        //public async Task<IActionResult> Details(string id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var account = await _context.Accounts
+        //        .Include(a => a.AccUsername)
+        //        .FirstOrDefaultAsync(m => m.AccountNumber == id);
+        //    if (account == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(account);
+        //}
 
         // GET: Accounts/Create
         public IActionResult Create()

@@ -25,6 +25,28 @@ namespace OnlineBankingSystem.Controllers
             return View(await _context.Transaction.ToListAsync());
         }
 
+        //public IActionResult Search()
+        //{
+        //    ViewData["actiontype"] = "get";
+        //    return View();
+        //}
+
+        public async Task<IActionResult> Search(string searchstring)
+        {
+            ViewData["actiontype"] = "post";
+            var transactions = await _context.Transaction.ToListAsync();
+            if (!String.IsNullOrEmpty(searchstring))
+            {
+                transactions = await _context.Transaction.Where(m => m.TransactionTime.ToString()!.Contains(searchstring)).AsNoTracking().ToListAsync();
+
+            }
+            var transactionSearch = new SearchTransaction
+            {
+                Transactions = transactions
+            };
+            return View(transactionSearch);
+        }
+
         // GET: Transactions/Details/5
         public async Task<IActionResult> Details(long? id)
         {
