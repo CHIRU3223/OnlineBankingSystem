@@ -33,6 +33,7 @@ namespace OnlineBankingSystem.Controllers
             return View(await _context.Users.ToListAsync());
         }
 
+        [Authorize]
         public async Task<IActionResult> Dashboard()
         {
             var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
@@ -47,12 +48,19 @@ namespace OnlineBankingSystem.Controllers
             return View(transactions);
 
         }
+
+        [Authorize]
         public async Task<IActionResult> MyDetails()
         {
             var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
             var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
             ViewData["AccountBalance"] = account.Balance;
+            var claims = new List<Claim>();
+            claims.Add(new Claim("AccountNum", account.AccountNumber));
+            var claimIdentity = new ClaimsIdentity(claims);
+            User.AddIdentity(claimIdentity);
+            
             return View(user);
         }
 
@@ -122,10 +130,13 @@ namespace OnlineBankingSystem.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,Password,Name,PhoneNo,SSN,DoB,UserCreated,isAdmin,email,NoOfAccounts")] User user)
+        public async Task<IActionResult> Create([Bind("Username,Password,Name,PhoneNo,SSN,DoB,email")] User user)
         {
             if (ModelState.IsValid)
             {
+                user.UserCreated = DateTime.Now;
+                user.NoOfAccounts = 0;
+                user.isAdmin = false;
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -76,14 +76,58 @@ namespace OnlineBankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TransactionId,FromAccountNumber,ToAccountNumber,TransactionTime,TransactionAmount,TransactionStatus,TransactionMessage")] Transaction transaction)
+        public async Task<IActionResult> Create([Bind("ToAccountNumber,TransactionStatus, TransactionAmount")] Transaction transaction)
         {
-            if (ModelState.IsValid)
+            ViewData["error"] = "No error";
+            //transaction.TransactionStatus = "success";
+            if (transaction.ToAccountNumber != null && transaction.TransactionAmount > 0 )
             {
-                _context.Add(transaction);
-                await _context.SaveChangesAsync();
+                var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
+                Account Fromaccount = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+                Account ToAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.AccountNumber == transaction.ToAccountNumber);
+                if(ToAccount == null || Fromaccount.AccountNumber==ToAccount.AccountNumber)
+                {
+                    //add if for same to address and from address
+                    ViewData["error"] = "Sender Account number doesnt exist!\n Please check account number again";
+                    return View(transaction);
+                }
+                if (!Fromaccount.Freezed && !ToAccount.Freezed)
+                {
+                    
+                    if (Fromaccount.Balance - transaction.TransactionAmount >= 0)
+                    {
+                        transaction.FromAccountNumber = Fromaccount.AccountNumber;
+                        transaction.TransactionTime = DateTime.Now;
+                        transaction.TransactionStatus = "success";
+                        
+                        Fromaccount.Balance -= transaction.TransactionAmount;
+                        Fromaccount.NumberOfTransactions += 1;
+                        ToAccount.Balance += transaction.TransactionAmount;
+                        ToAccount.NumberOfTransactions += 1;
+
+                        _context.Update(Fromaccount);
+                        _context.Add(transaction);
+
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        ViewData["error"] = "Insufficient Balance! ";
+                        return View(transaction);
+                    }
+                }
+
+                
+                else
+                {
+                    ViewData["error"] = Fromaccount.Freezed ? "Your Account is Freezed!" : "Sender Account is Freezed";
+                    return View(transaction);
+                }
+
+                
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["error"] = "Enter Correct Account number and Amount";
             return View(transaction);
         }
 

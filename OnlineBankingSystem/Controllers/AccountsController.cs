@@ -72,11 +72,15 @@ namespace OnlineBankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AccountNumber,Username,Freezed,Balance,NumberOfTransactions,Checkbook")] Account account)
+        public async Task<IActionResult> Create([Bind("Username,Freezed,Balance,Checkbook")] Account account)
         {
             if (ModelState.IsValid)
             {
+                account.NumberOfTransactions = 0;
+                User updateUser = await _context.Users.FirstOrDefaultAsync(x => x.Username == account.Username);
+                updateUser.NoOfAccounts += 1;
                 _context.Add(account);
+                _context.Update(updateUser);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
