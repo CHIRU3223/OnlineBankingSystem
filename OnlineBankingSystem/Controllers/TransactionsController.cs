@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,11 @@ namespace OnlineBankingSystem.Controllers
             _context = context;
         }
 
+
         // GET: Transactions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string FromAccountNumber)
         {
-            return View(await _context.Transaction.ToListAsync());
+            return View(await _context.Transaction.Where( x=> x.FromAccountNumber == FromAccountNumber).ToListAsync());
         }
 
         //public IActionResult Search()
@@ -124,63 +126,15 @@ namespace OnlineBankingSystem.Controllers
                     return View(transaction);
                 }
 
-                
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), Fromaccount.AccountNumber);
+                //return RedirectToAction(nameof(Index));
+
             }
             ViewData["error"] = "Enter Correct Account number and Amount";
             return View(transaction);
         }
 
-        // GET: Transactions/Edit/5
-        public async Task<IActionResult> Edit(long? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var transaction = await _context.Transaction.FindAsync(id);
-            if (transaction == null)
-            {
-                return NotFound();
-            }
-            return View(transaction);
-        }
-
-        // POST: Transactions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("TransactionId,FromAccountNumber,ToAccountNumber,TransactionTime,TransactionAmount,TransactionStatus,TransactionMessage")] Transaction transaction)
-        {
-            if (id != transaction.TransactionId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(transaction);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TransactionExists(transaction.TransactionId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(transaction);
-        }
+        
 
         // GET: Transactions/Delete/5
         public async Task<IActionResult> Delete(long? id)

@@ -75,6 +75,11 @@ namespace OnlineBankingSystem.Controllers
         {
             var user = await _context.Users.FirstOrDefaultAsync(m => m.Username == username);
             ViewData["ReturnUrl"] = returnUrl;
+            if(user == null)
+            {
+                ViewData["error"] = "Username or Password is incorrect!";
+                return View();
+            }
             if(user.Username == username && user.Password == password)
             {
                 var userRole = (!user.isAdmin) ? "User" : "Admin";
@@ -89,6 +94,7 @@ namespace OnlineBankingSystem.Controllers
                 await HttpContext.SignInAsync(claimPrincipal);
                 return RedirectToAction(nameof(Dashboard));
             }
+            ViewData["error"] = "Password is incorrect!";
             return View();
         }
 
@@ -167,18 +173,26 @@ namespace OnlineBankingSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(string id, [Bind("Username,Password,Name,PhoneNo,SSN,DoB,UserCreated,isAdmin,email,NoOfAccounts")] User user)
+        public async Task<IActionResult> Edit(string id, [Bind("Username,Name,PhoneNo,SSN,DoB,email")] User user)
         {
             if (id != user.Username)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            user.Password = "";
+            if (User != null)
             {
+                User olduser = await _context.Users.FindAsync(id);
+                User updatedUser = olduser;
+                updatedUser.Username = user.Username;
+                updatedUser.Name = user.Name;
+                updatedUser.PhoneNo = user.PhoneNo;
+                updatedUser.SSN = user.SSN;
+                updatedUser.DoB = user.DoB;
+                updatedUser.email = user.email;
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(updatedUser);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -214,6 +228,45 @@ namespace OnlineBankingSystem.Controllers
             }
 
             return View(user);
+        }
+        
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(string id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+
+        [ValidateAntiForgeryToken]
+        public  async Task<IActionResult> ChangePassword(string id,string CurrPass, string NewPass, string ReenterNewPass) {
+            if(NewPass == ReenterNewPass && CurrPass != NewPass)
+            {
+                User user = await _context.Users.FindAsync(id);
+                if(user.Password == CurrPass)
+                {
+                    user.Password = NewPass;
+                    _context.Update(user);
+                    await _context.SaveChangesAsync();
+                    await HttpContext.SignOutAsync();
+                    return RedirectToAction(actionName: "Index", controllerName: "Home");
+                }
+                ViewData["err"] = "Entered Current Password is Wrong! Please try again!";
+            }
+            ViewData["err"] = "New Password and Reenter Password didnt match or New Password is same as Current Password";
+            return View();
         }
 
         // POST: Users/Delete/5

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // GET: Accounts
+        [Authorize(Roles ="Admin")]
         [Route("Accounts")]
         public async Task<IActionResult> Index()
         {
@@ -27,6 +29,7 @@ namespace OnlineBankingSystem.Controllers
             return View(applicationDbContext);
         }
 
+        [Authorize]
         public async Task<IActionResult> MyAccountBalance()
         {
             var username = User.Claims.FirstOrDefault(x => x.Type == "Username").Value;
@@ -35,12 +38,14 @@ namespace OnlineBankingSystem.Controllers
             Console.WriteLine(user);
             return View(user);
         }
+
+        [Authorize]
         public async Task<IActionResult> Details()
         {
             var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
             var account = await _context.Accounts.Include(a => a.AccUsername).FirstOrDefaultAsync(x => x.Username == username);
             return View(account);
-    }
+        }
         // GET: Accounts/Details/5
         //public async Task<IActionResult> Details(string id)
         //{
@@ -61,6 +66,8 @@ namespace OnlineBankingSystem.Controllers
         //}
 
         // GET: Accounts/Create
+
+        [Authorize(Roles ="Admin")]
         public IActionResult Create()
         {
             ViewData["Username"] = new SelectList(_context.Users, "Username", "Username");
@@ -71,6 +78,7 @@ namespace OnlineBankingSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Username,Freezed,Balance,Checkbook")] Account account)
         {
@@ -89,6 +97,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // GET: Accounts/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -109,6 +118,7 @@ namespace OnlineBankingSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("AccountNumber,Username,Freezed,Balance,NumberOfTransactions,Checkbook")] Account account)
         {
@@ -142,6 +152,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // GET: Accounts/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -162,6 +173,7 @@ namespace OnlineBankingSystem.Controllers
 
         // POST: Accounts/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
@@ -171,6 +183,7 @@ namespace OnlineBankingSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
         private bool AccountExists(string id)
         {
             return _context.Accounts.Any(e => e.AccountNumber == id);

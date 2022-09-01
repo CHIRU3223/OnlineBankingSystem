@@ -2,7 +2,7 @@
 @{ 
     ViewData["title"] = "Login Page";
     //var returnUrl = ViewData["ReturnUrl"] as string;
-    //var error = TempData["error"] as string;
+    var error = ViewData["error"] as string;
 }
 <h4>Login</h4>
 <hr />
@@ -11,6 +11,7 @@
         @*<form method="post" action="/login?ReturnUrl=@System.Net.WebUtility.UrlEncode(returnUrl)">*@
         <form method="post" action="/login">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <p class="text-danger">@error</p>
             <div class="form-group">
                 <label asp-for="Username" class="control-label"></label>
                 <input asp-for="Username" class="form-control" />
