@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OnlineBankingSystem.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +27,32 @@ namespace OnlineBankingSystem
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+                   Configuration.GetConnectionString("DefaultConnection")
+               ));
+
+            services.AddAuthentication(options => options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie( options =>
+                {
+                    options.LoginPath = "/Login";
+                    options.AccessDeniedPath = "/Home";
+                    options.Events = new CookieAuthenticationEvents()
+                    {
+                        OnSignedIn = async context =>
+                        {
+                            await Task.CompletedTask;
+                        },
+                        OnSigningIn = async context =>
+                        {
+                            await Task.CompletedTask;
+                        },
+                        OnValidatePrincipal = async context =>
+                        {
+                            await Task.CompletedTask;
+                        }
+                    };
+                });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +73,7 @@ namespace OnlineBankingSystem
 
             app.UseRouting();
 
+            app.UseAuthentication(); // ******* added ********
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

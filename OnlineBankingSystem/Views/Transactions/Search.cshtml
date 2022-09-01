@@ -1,0 +1,77 @@
+﻿@*@model IEnumerable<OnlineBankingSystem.Models.Transaction>*@
+@model OnlineBankingSystem.Models.SearchTransaction;
+@{
+    ViewData["Title"] = "Search";
+    var actiontype = ViewData["actiontype"] as string;
+}
+
+<h1>Search</h1>
+
+<form asp-controller="Transactions" method="get" asp-action="Search">
+    <label>Search for Transaction from Date(Format: yyyy-mm-dd)</label>
+    <input asp-for="SearchString"/>
+    <input type="submit" value="Search" class="btn btn-primary" />
+
+</form>
+<p>
+    <a asp-action="Create">Make New Transaction</a>
+</p>
+
+@if (actiontype == "post")
+{
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].FromAccountNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].ToAccountNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].TransactionTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].TransactionAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].TransactionStatus)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Transactions[0].TransactionMessage)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Transactions)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FromAccountNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ToAccountNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TransactionTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TransactionAmount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TransactionStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TransactionMessage)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.TransactionId">Details</a> |
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

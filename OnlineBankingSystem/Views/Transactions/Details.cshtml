@@ -1,0 +1,53 @@
+﻿@model OnlineBankingSystem.Models.Transaction
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Transaction</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FromAccountNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FromAccountNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ToAccountNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ToAccountNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TransactionTime)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TransactionTime)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TransactionAmount)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TransactionAmount)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TransactionStatus)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TransactionStatus)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TransactionMessage)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TransactionMessage)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Search">Back to Transactions</a>
+</div>

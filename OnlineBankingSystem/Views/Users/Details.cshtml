@@ -1,0 +1,72 @@
+﻿@model OnlineBankingSystem.Models.User
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PhoneNo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PhoneNo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSN)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSN)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DoB)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DoB)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.UserCreated)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.UserCreated)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.isAdmin)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.isAdmin)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NoOfAccounts)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NoOfAccounts)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Username">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
