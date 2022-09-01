@@ -14,9 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Username" />
             <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <a asp-action="ChangePassword" asp-route-id="@Model.Username" class="btn btn-danger">Change Password</a>
             </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -38,29 +36,17 @@
                 <input asp-for="DoB" class="form-control" />
                 <span asp-validation-for="DoB" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="UserCreated" class="control-label"></label>
-                <input asp-for="UserCreated" class="form-control" />
-                <span asp-validation-for="UserCreated" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="isAdmin" /> @Html.DisplayNameFor(model => model.isAdmin)
-                </label>
-            </div>
+            
             <div class="form-group">
                 <label asp-for="email" class="control-label"></label>
                 <input asp-for="email" class="form-control" />
                 <span asp-validation-for="email" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NoOfAccounts" class="control-label"></label>
-                <input asp-for="NoOfAccounts" class="form-control" />
-                <span asp-validation-for="NoOfAccounts" class="text-danger"></span>
-            </div>
+            
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
+
         </form>
     </div>
 </div>
