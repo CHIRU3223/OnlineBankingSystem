@@ -41,34 +41,43 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Dashboard">Dashboard</a>
                             </li>
-                            @*@if (User.Identities.FirstOrDefault(x => x.Type == "Role").Value == "admin")*@
-                            @*@if(User.Identity.Claims[3].FirstOrDefault(x=>x.Type == "Roles").Value == "admin")*@
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="MyDetails">My Details</a>
                             </li>
-
-                            @foreach (var c in User.Claims)
-                            {
-                                if (c.Type == "Roles" && c.Value == "Admin")
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">All Users</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">All Accounts</a>
-                                    </li>
-
-                                }
-                            }
-
-
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Details">My Account Details</a>
                             </li>
 
+                            @if (User.Claims.FirstOrDefault(x => x.Type == "Roles").Value == "Admin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">All Users</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">All Accounts</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Requests" asp-action="Index">All Requests</a>
+                                </li>
+                            }
+
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Requests" asp-action="MyRequests">My Requests</a>
+                                </li>
+                            }
+
+
+
+
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Logout">Logout</a>
+                                <a asp-controller="Transactions" asp-action="Create" class="btn btn-primary">Make a Transaction</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-danger" asp-area="" asp-controller="Users" asp-action="Logout">Logout</a>
                             </li>
                         }
                     </ul>
