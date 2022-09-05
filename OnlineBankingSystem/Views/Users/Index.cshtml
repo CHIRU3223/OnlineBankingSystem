@@ -5,30 +5,13 @@
     ViewData["Role"] = "" as string;
 }
 
-<h1>Your Dashboard</h1>
-<h2>@User.Identity.Name</h2>
-<p>@User.Identity.AuthenticationType</p>
-<ul>
-    @foreach (var c in User.Claims)
-    {
-        @if(c.Type == "Roles" && c.Value == "Admin")
-        {
-            
-            ViewData["Role"] = "Admin";
+<h1>
+    All User Details
+</h1>
 
-        }
-                else
-                {
-                    ViewData["Role"] = "User";
-                }
-        <li>@c.Type : @c.Value</li>
-    }
-</ul>
 <p>
-    @if (ViewData["Role"] as string == "Admin")
-    {
-        <a asp-action="Create">Create New</a>
-    }
+        <a asp-action="Create" class="btn btn-primary">Create New User</a>
+   
 </p>
 <table class="table">
     <thead>

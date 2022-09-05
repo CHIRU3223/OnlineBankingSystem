@@ -7,6 +7,10 @@
 
 <h1>Search</h1>
 
+@*<div>
+    <p><b>Total Withdraw Amount = </b></p>   <p><b>Total Deposit Amount = </b></p>
+</div>*@
+
 <form asp-controller="Transactions" method="get" asp-action="Search">
     <label>Search for Transaction from Date(Format: yyyy-mm-dd)</label>
     <input asp-for="SearchString"/>

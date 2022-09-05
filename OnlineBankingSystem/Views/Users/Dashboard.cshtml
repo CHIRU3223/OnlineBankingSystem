@@ -3,19 +3,36 @@
     ViewData["Title"] = "Dashboard";
     var balance = ViewData["AccountBalance"];
     var transactions = ViewData["transactions"];
+    var freezed = ViewData["AccFreezed"];
+    var hasCheckbook = ViewData["AccCheckbook"] ;
+    var accNo = ViewData["AccNo"] as string;
 }
 
 <h1>Dashboard</h1>
+<br />
+<br />
+
+
 <div>
     <h3>Account Balance = @balance</h3>
-
-
 </div>
 
-<a asp-controller="Account" asp-action="Index" class="btn btn-secondary">Request for Checkbook</a>
+@if(hasCheckbook.Equals(false))
+{
+    <a asp-controller="Requests" asp-action="NewRequest" asp-route-id="@accNo" asp-route-value="checkbook" class="btn btn-secondary">Request for Checkbook</a>
+}
 
-<a asp-controller="Account" asp-action="" class="btn btn-danger">Freeze Account</a>
+@if (freezed.Equals(false))
+{
+    <a asp-controller="Requests" asp-action="NewRequest" asp-route-id="@accNo" asp-route-value="freeze" class="btn btn-danger">Freeze Account</a>
+}
+else
+{
+    <a asp-controller="Requests" asp-action="NewRequest" asp-route-id="@accNo" asp-route-value="freeze" class="btn btn-success">UnFreeze Account</a>
+}
 
+<br />
+<br />
 
 <h4>Recent 10 Transactions</h4>
 <table class="table">
@@ -43,19 +60,12 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.TransactionAmount)
                 </td>
-                @*<td>
-                        <a asp-action="Edit" asp-route-id="@item.Tra">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Username">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Username">Delete</a>
-                    </td>*@
+
             </tr>
         }
     </tbody>
 </table>
 
 
-@*<form asp-action="get" action ="">
-    Search For Transaction: <input type="date" />
-    </form>*@
 <a asp-controller="Transactions" asp-action="Create" class="btn btn-primary">Make a Transaction</a>
 <a asp-controller="Transactions" asp-action="Search" class="btn btn-secondary">Search Transaction</a>

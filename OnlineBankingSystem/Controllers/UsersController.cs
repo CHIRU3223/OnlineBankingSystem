@@ -26,7 +26,7 @@ namespace OnlineBankingSystem.Controllers
         
 
         // GET: Users
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             //var users = _context.Users.ToListAsync(
@@ -39,9 +39,15 @@ namespace OnlineBankingSystem.Controllers
             var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
             var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+            if(account == null)
+            {
+                ViewData["Error"] = "No Account Found! Raise a Request to create new account";
+                return RedirectToAction(actionName: "Create", controllerName: "Requests");
+            }
             ViewData["AccountBalance"] = account.Balance;
-            //var transactions = await _context.Transaction.FromSqlInterpolated($"SELECT * FROM Transaction WHERE FromAccount={account.AccountNumber}").AsNoTracking().ToListAsync();
-            //var transactions = await _context.Transaction.ToListAsync(x => x.FromAccountNumber == account.AccountNumber);
+            ViewData["AccFreezed"] = account.Freezed;
+            ViewData["AccNo"] = account.AccountNumber;
+            ViewData["AccCheckbook"] = account.Checkbook;
             var transactions = await _context.Transaction.Where(m => m.FromAccountNumber == account.AccountNumber).Take(10).AsNoTracking().ToListAsync();
             ViewData["Transactions"] = transactions;
             
@@ -54,13 +60,7 @@ namespace OnlineBankingSystem.Controllers
         {
             var username = User.Claims.FirstOrDefault(y => y.Type == "Username").Value;
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
-            var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
-            ViewData["AccountBalance"] = account.Balance;
             var claims = new List<Claim>();
-            claims.Add(new Claim("AccountNum", account.AccountNumber));
-            var claimIdentity = new ClaimsIdentity(claims);
-            User.AddIdentity(claimIdentity);
-            
             return View(user);
         }
 
@@ -179,7 +179,6 @@ namespace OnlineBankingSystem.Controllers
             {
                 return NotFound();
             }
-            user.Password = "";
             if (User != null)
             {
                 User olduser = await _context.Users.FindAsync(id);
@@ -281,6 +280,8 @@ namespace OnlineBankingSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [Authorize]
         private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.Username == id);

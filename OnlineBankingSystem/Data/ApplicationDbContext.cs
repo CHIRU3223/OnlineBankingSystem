@@ -18,6 +18,6 @@ namespace OnlineBankingSystem.Data
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Transaction> Transaction { get; set; }
 
-        //public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Request> Requests { get; set; }
     }
 }
