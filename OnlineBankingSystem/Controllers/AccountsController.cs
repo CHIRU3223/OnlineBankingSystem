@@ -23,9 +23,9 @@ namespace OnlineBankingSystem.Controllers
         // GET: Accounts
         [Authorize(Roles ="Admin")]
         [Route("Accounts")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var applicationDbContext = _context.Accounts.Include(a => a.AccUsername);
+            var applicationDbContext =  _context.Accounts.Include(a => a.AccUsername);
             return View(applicationDbContext);
         }
 
@@ -80,7 +80,7 @@ namespace OnlineBankingSystem.Controllers
         [HttpPost]
         [Authorize(Roles ="Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,Freezed,Balance,Checkbook")] Account account)
+        public async Task<IActionResult> Create([Bind("Username, AccountNumber,Freezed,Balance,Checkbook")] Account account)
         {
             if (ModelState.IsValid)
             {
@@ -97,7 +97,7 @@ namespace OnlineBankingSystem.Controllers
         }
 
         // GET: Accounts/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -117,8 +117,9 @@ namespace OnlineBankingSystem.Controllers
         // POST: Accounts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("AccountNumber,Username,Freezed,Balance,NumberOfTransactions,Checkbook")] Account account)
         {
@@ -131,7 +132,12 @@ namespace OnlineBankingSystem.Controllers
             {
                 try
                 {
-                    _context.Update(account);
+                    Account oldacc =  _context.Accounts.FirstOrDefault(x => x.AccountNumber == account.AccountNumber);
+                    Account updateacc = oldacc;
+                    updateacc.Freezed = account.Freezed;
+                    updateacc.Checkbook = account.Checkbook;
+                    updateacc.Balance = account.Balance;
+                    _context.Update(updateacc);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
